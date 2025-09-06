@@ -32,7 +32,7 @@ const Report = () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       setloading(true);
-      await axios.post('/api/v1/transactions/add-transaction', { ...values, userid: user._id });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/add-transaction`, { ...values, userid: user._id });
       getallTransction();
       getDetalisforCard();
       setloading(false);
@@ -50,7 +50,7 @@ const Report = () => {
     try {
       setloading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await axios.post('/api/v1/transactions/get-transaction', { userid: user._id, frequency, selectedDate, typeofTrans });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transaction`, { userid: user._id, frequency, selectedDate, typeofTrans });
       console.log(res.data);
       setTransactionDetails(res.data);
       setloading(false);
@@ -67,7 +67,7 @@ const Report = () => {
 
       setloading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await axios.post('/api/v1/transactions/get-transactionmonth', { userid: user._id, date: new Date().getMonth() });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transactionmonth`, { userid: user._id, date: new Date().getMonth() });
       console.log(new Date().getMonth());
 
       console.log(res.data);
@@ -103,19 +103,7 @@ const Report = () => {
   };
 
 
-  //handle delete
-  const handleDeleteTrans = async (id) => {
-    try {
-      const res = await axios.delete(`/api/v1/transactions/delete/${id}`);
-      message.success("Transaction Deleted successfully")
-      getallTransction();
-      getDetalisforCard()
-    } catch (error) {
-      message.error('Item not deleted due to some internal issue')
-      console.log(error);
 
-    }
-  }
 
 
 

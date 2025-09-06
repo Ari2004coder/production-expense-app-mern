@@ -27,13 +27,15 @@ const Income = () => {
   const [selectedDate, setSelectedDate] = useState([]);
   const [typeofTrans, setTypeofTrans] = useState('Income');
   const [transcationDetailsForanalytic, setTranscationDetailsForanalytic] = useState([])
+   const [showModalForUpdate, setShowModalforUpadte] = useState(false);
+  const [editable, setEditable] = useState(null);
   // form handaling
   const handleSubmit = async (values) => {
     console.log(values);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       setloading(true);
-      await axios.post('/api/v1/transactions/add-transaction', { ...values, userid: user._id });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/add-transaction`, { ...values, userid: user._id });
       getallTransction();
       getDetalisforanalytics();
       setloading(false);
@@ -51,7 +53,7 @@ const Income = () => {
     try {
       setloading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await axios.post('/api/v1/transactions/get-transaction', { userid: user._id, frequency, selectedDate, typeofTrans });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transaction`, { userid: user._id, frequency, selectedDate, typeofTrans });
       console.log(res.data);
       setTransactionDetails(res.data);
       setloading(false);
@@ -68,7 +70,7 @@ const Income = () => {
 
       setloading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await axios.post('/api/v1/transactions/get-transactionyearly', { userid: user._id, date: new Date(), typeofTrans });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transactionyearly`, { userid: user._id, date: new Date(), typeofTrans });
       console.log(new Date().getMonth());
 
       console.log(res.data);
@@ -110,7 +112,7 @@ const Income = () => {
   //handle delete
   const handleDeleteTrans = async (id) => {
     try {
-      const res = await axios.delete(`/api/v1/transactions/delete/${id}`);
+      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/transactions/delete/${id}`);
       message.success("Transaction Deleted successfully")
       getallTransction();
       getDetalisforanalytics();
@@ -120,6 +122,21 @@ const Income = () => {
 
     }
   }
+
+    const handleUpdateTrans = async (values) => {
+  
+      try {
+        const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/v1/transactions/update/${editable._id}`, values)
+        message.success("update success");
+        getallTransction();
+        getDetalisforCard();
+        setShowModalforUpadte(false);
+        setEditable(null);
+      } catch (error) {
+        message.error("face some error")
+      }
+  
+    }
 
   //table body
   const Tbody = () => {
@@ -163,6 +180,11 @@ const Income = () => {
       </>
     );
   };
+  useEffect(() => {
+      if (editable) {
+        form.setFieldsValue(editable)
+      }
+    }, [editable])
 
   return (
     <>
@@ -242,6 +264,53 @@ const Income = () => {
                 <div>
                   <Button type="primary" htmlType="submit">
                     Save
+                  </Button>
+                </div>
+              </Form>
+            </Modal>
+              <Modal title="Edit Transaction" open={showModalForUpdate} onCancel={() => {
+              setShowModalforUpadte(false);
+              setEditable(null)
+            }} footer={false}>
+              <Form form={form} layout="vertical" onFinish={handleUpdateTrans}>
+                <Form.Item label="Amount" name="amount">
+                  <Input type="Text" />
+                </Form.Item>
+                <Form.Item name="type" label="Type">
+                  <Select placeholder="Select a type" onChange={handleTypeChange}>
+                    <Option value="Income">Income</Option>
+                    <Option value="Expense">Expense</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item name="category" label="Category">
+                  <Select
+                    placeholder="Select a category"
+                    // The category dropdown is disabled until a type is selected
+                    disabled={!type}
+                  >
+                    {/* Dynamically render options based on the selected type.
+              We use `categoryData[type]` to get the correct array of options.
+              The `|| []` is a fallback to prevent errors if `type` is not yet set.
+            */}
+                    {(categoryData[type] || []).map((category) => (
+                      <Option key={category} value={category}>
+                        {category}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item label="Date" name="date">
+                  <Input type="date" />
+                </Form.Item>
+                <Form.Item label="Refrence" name="refrence">
+                  <Input type="text" />
+                </Form.Item>
+                <Form.Item label="Description" name="description">
+                  <Input type="text" />
+                </Form.Item>
+                <div>
+                  <Button type="primary" htmlType="submit">
+                    Update
                   </Button>
                 </div>
               </Form>

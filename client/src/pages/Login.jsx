@@ -25,7 +25,7 @@ const Login = () => {
 
     try {
 
-      const { data } = await axios.post('/api/v1/user/login', { email, password })
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/user/login`, { email, password })
 
 
       toast.success("Loged in Sucessfuly done! please wait");

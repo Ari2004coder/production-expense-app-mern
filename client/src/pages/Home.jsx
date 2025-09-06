@@ -33,13 +33,13 @@ const Home = () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       setloading(true);
-      await axios.post('/api/v1/transactions/add-transaction', { ...values, userid: user._id });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/add-transaction`, { ...values, userid: user._id });
       getallTransction();
       getDetalisforCard();
       setloading(false);
 
       setShowModal(false);
-      messageApi.success('Transaction Added Successfully');
+      messageApi.success(`Transaction Added Successfully`);
     } catch (error) {
       setloading(false);
       messageApi.error('Failed to add transaction.');
@@ -51,7 +51,7 @@ const Home = () => {
     try {
       setloading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await axios.post('/api/v1/transactions/get-transaction', { userid: user._id, frequency, selectedDate, typeofTrans });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transaction`, { userid: user._id, frequency, selectedDate, typeofTrans });
       console.log(res.data);
       setTransactionDetails(res.data);
       setloading(false);
@@ -68,7 +68,7 @@ const Home = () => {
 
       setloading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await axios.post('/api/v1/transactions/get-transactionmonth', { userid: user._id, date: new Date().getMonth() });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transactionmonth`, { userid: user._id, frequency });
       console.log(new Date().getMonth());
 
       console.log(res.data);
@@ -107,7 +107,7 @@ const Home = () => {
   //handle delete
   const handleDeleteTrans = async (id) => {
     try {
-      const res = await axios.delete(`/api/v1/transactions/delete/${id}`);
+      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/transactions/delete/${id}`);
       message.success("Transaction Deleted successfully")
       getallTransction();
       getDetalisforCard()
@@ -127,7 +127,7 @@ const Home = () => {
   const handleUpdateTrans = async (values) => {
 
     try {
-      const res = await axios.put(`/api/v1/transactions/update/${editable._id}`, values)
+      const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/v1/transactions/update/${editable._id}`, values)
       message.success("update success");
       getallTransction();
       getDetalisforCard();
@@ -201,9 +201,9 @@ const Home = () => {
             </div>
           )}
           <div className='analytics w-full flex justify-around p-3  gap-4 flex-wrap md:flex-nowrap'>
-            <Card title="Total Income" value={transactionDetails} />
-            <Card title="Total Expense" value={transactionDetails} />
-            <Card title="Net Amount" value={transactionDetails} />
+            <Card title="Total Income" value={transcationDetalsForcard} />
+            <Card title="Total Expense" value={transcationDetalsForcard} />
+            <Card title="Net Amount" value={transcationDetalsForcard} />
           </div>
           <div className="filter flex flex-col md:flex-row items-center justify-between shadow-xl px-3 py-5 m-2 rounded-2xl border-t-1 border-gray-400 border-x-1 gap-4">
             <div className="rangefilter flex flex-wrap gap-3">

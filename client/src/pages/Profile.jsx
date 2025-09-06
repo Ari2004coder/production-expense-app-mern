@@ -20,7 +20,7 @@ const Profile = () => {
     try {
       setLoading(true);
       // Corrected API endpoint URL
-      const res = await axios.post('/api/v1/user/update-user', { userId: user._id, name: values.name });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/user/update-user`, { userId: user._id, name: values.name });
       if (res.data.success) {
         message.success(res.data.message);
         // Update local storage with new user data
