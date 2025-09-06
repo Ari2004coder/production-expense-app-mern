@@ -68,7 +68,7 @@ const Home = () => {
 
       setloading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transactionmonth`, { userid: user._id, frequency });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/transactions/get-transactionmonth`, { userid: user._id, frequency,selectedDate });
       console.log(new Date().getMonth());
 
       console.log(res.data);
